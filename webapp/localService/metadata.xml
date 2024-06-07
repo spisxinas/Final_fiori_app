@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
+    <edmx:Reference Uri="https://sap.github.io/odata-vocabularies/vocabularies/Common.xml">
+        <edmx:Include Alias="Common" Namespace="com.sap.vocabularies.Common.v1"/>
+    </edmx:Reference>
+    <edmx:Reference Uri="https://oasis-tcs.github.io/odata-vocabularies/vocabularies/Org.OData.Core.V1.xml">
+        <edmx:Include Alias="Core" Namespace="Org.OData.Core.V1"/>
+    </edmx:Reference>
+    <edmx:Reference Uri="https://sap.github.io/odata-vocabularies/vocabularies/UI.xml">
+        <edmx:Include Alias="UI" Namespace="com.sap.vocabularies.UI.v1"/>
+    </edmx:Reference>
+    <edmx:DataServices>
+        <Schema Namespace="fashionShop_Service" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+            <EntityContainer Name="EntityContainer">
+                <EntitySet Name="Sections" EntityType="fashionShop_Service.Sections"/>
+                <EntitySet Name="Fashion_Types" EntityType="fashionShop_Service.Fashion_Types">
+                    <NavigationPropertyBinding Path="section" Target="Sections"/>
+                </EntitySet>
+                <EntitySet Name="Fashion_Items" EntityType="fashionShop_Service.Fashion_Items">
+                    <NavigationPropertyBinding Path="FashionType" Target="Fashion_Types"/>
+                    <NavigationPropertyBinding Path="currency" Target="Currencies"/>
+                </EntitySet>
+                <EntitySet Name="SrvFashionShop" EntityType="fashionShop_Service.SrvFashionShop">
+                    <NavigationPropertyBinding Path="currency" Target="Currencies"/>
+                </EntitySet>
+                <EntitySet Name="Currencies" EntityType="fashionShop_Service.Currencies">
+                    <NavigationPropertyBinding Path="texts" Target="Currencies_texts"/>
+                    <NavigationPropertyBinding Path="localized" Target="Currencies_texts"/>
+                </EntitySet>
+                <EntitySet Name="Currencies_texts" EntityType="fashionShop_Service.Currencies_texts"/>
+            </EntityContainer>
+            <EntityType Name="Sections">
+                <Key>
+                    <PropertyRef Name="id"/>
+                </Key>
+                <Property Name="id" Type="Edm.Guid" Nullable="false"/>
+                <Property Name="name" Type="Edm.String" MaxLength="16"/>
+                <Property Name="description" Type="Edm.String" MaxLength="64"/>
+            </EntityType>
+            <EntityType Name="Fashion_Types">
+                <Key>
+                    <PropertyRef Name="id"/>
+                </Key>
+                <Property Name="id" Type="Edm.Guid" Nullable="false"/>
+                <NavigationProperty Name="section" Type="fashionShop_Service.Sections">
+                    <ReferentialConstraint Property="section_id" ReferencedProperty="id"/>
+                </NavigationProperty>
+                <Property Name="section_id" Type="Edm.Guid"/>
+                <Property Name="typename" Type="Edm.String" MaxLength="16"/>
+                <Property Name="description" Type="Edm.String" MaxLength="64"/>
+            </EntityType>
+            <EntityType Name="Fashion_Items">
+                <Key>
+                    <PropertyRef Name="id"/>
+                </Key>
+                <Property Name="id" Type="Edm.Guid" Nullable="false"/>
+                <NavigationProperty Name="FashionType" Type="fashionShop_Service.Fashion_Types">
+                    <ReferentialConstraint Property="FashionType_id" ReferencedProperty="id"/>
+                </NavigationProperty>
+                <Property Name="FashionType_id" Type="Edm.Guid"/>
+                <Property Name="itemname" Type="Edm.String" MaxLength="16"/>
+                <Property Name="brand" Type="Edm.String" MaxLength="64"/>
+                <Property Name="size" Type="Edm.String" MaxLength="8"/>
+                <Property Name="material" Type="Edm.String" MaxLength="16"/>
+                <Property Name="price" Type="Edm.String" MaxLength="10"/>
+                <NavigationProperty Name="currency" Type="fashionShop_Service.Currencies">
+                    <ReferentialConstraint Property="currency_code" ReferencedProperty="code"/>
+                </NavigationProperty>
+                <Property Name="currency_code" Type="Edm.String" MaxLength="3"/>
+                <Property Name="isAvailable" Type="Edm.String" MaxLength="1"/>
+            </EntityType>
+            <EntityType Name="SrvFashionShop">
+                <Key>
+                    <PropertyRef Name="fashionItemId"/>
+                </Key>
+                <Property Name="sectionId" Type="Edm.Guid"/>
+                <Property Name="sectionName" Type="Edm.String" MaxLength="16"/>
+                <Property Name="sectionDescription" Type="Edm.String" MaxLength="64"/>
+                <Property Name="fashionTypeId" Type="Edm.Guid"/>
+                <Property Name="fashionTypeName" Type="Edm.String" MaxLength="16"/>
+                <Property Name="fashionTypeDesc" Type="Edm.String" MaxLength="64"/>
+                <Property Name="fashionItemId" Type="Edm.Guid" Nullable="false"/>
+                <Property Name="fashionItemName" Type="Edm.String" MaxLength="16"/>
+                <Property Name="brand" Type="Edm.String" MaxLength="64"/>
+                <Property Name="size" Type="Edm.String" MaxLength="8"/>
+                <Property Name="material" Type="Edm.String" MaxLength="16"/>
+                <Property Name="price" Type="Edm.String" MaxLength="10"/>
+                <NavigationProperty Name="currency" Type="fashionShop_Service.Currencies">
+                    <ReferentialConstraint Property="currency_code" ReferencedProperty="code"/>
+                </NavigationProperty>
+                <Property Name="currency_code" Type="Edm.String" MaxLength="3"/>
+                <Property Name="isAvailable" Type="Edm.String" MaxLength="1"/>
+                <Property Name="itemDetails" Type="Edm.String" MaxLength="32"/>
+                <Property Name="priceRange" Type="Edm.String" MaxLength="10"/>
+            </EntityType>
+            <EntityType Name="Currencies">
+                <Key>
+                    <PropertyRef Name="code"/>
+                </Key>
+                <Property Name="name" Type="Edm.String" MaxLength="255"/>
+                <Property Name="descr" Type="Edm.String" MaxLength="1000"/>
+                <Property Name="code" Type="Edm.String" MaxLength="3" Nullable="false"/>
+                <Property Name="symbol" Type="Edm.String" MaxLength="5"/>
+                <Property Name="minorUnit" Type="Edm.Int16"/>
+                <NavigationProperty Name="texts" Type="Collection(fashionShop_Service.Currencies_texts)">
+                    <OnDelete Action="Cascade"/>
+                </NavigationProperty>
+                <NavigationProperty Name="localized" Type="fashionShop_Service.Currencies_texts">
+                    <ReferentialConstraint Property="code" ReferencedProperty="code"/>
+                </NavigationProperty>
+            </EntityType>
+            <EntityType Name="Currencies_texts">
+                <Key>
+                    <PropertyRef Name="locale"/>
+                    <PropertyRef Name="code"/>
+                </Key>
+                <Property Name="locale" Type="Edm.String" MaxLength="14" Nullable="false"/>
+                <Property Name="name" Type="Edm.String" MaxLength="255"/>
+                <Property Name="descr" Type="Edm.String" MaxLength="1000"/>
+                <Property Name="code" Type="Edm.String" MaxLength="3" Nullable="false"/>
+            </EntityType>
+            <Annotations Target="fashionShop_Service.Fashion_Items/currency">
+                <Annotation Term="Common.Label" String="Currency"/>
+                <Annotation Term="Core.Description" String="Currency code as specified by ISO 4217"/>
+            </Annotations>
+            <Annotations Target="fashionShop_Service.Fashion_Items/currency_code">
+                <Annotation Term="Common.Label" String="Currency"/>
+                <Annotation Term="Common.ValueList">
+                    <Record Type="Common.ValueListType">
+                        <PropertyValue Property="Label" String="Currency"/>
+                        <PropertyValue Property="CollectionPath" String="Currencies"/>
+                        <PropertyValue Property="Parameters">
+                            <Collection>
+                                <Record Type="Common.ValueListParameterInOut">
+                                    <PropertyValue Property="LocalDataProperty" PropertyPath="currency_code"/>
+                                    <PropertyValue Property="ValueListProperty" String="code"/>
+                                </Record>
+                                <Record Type="Common.ValueListParameterDisplayOnly">
+                                    <PropertyValue Property="ValueListProperty" String="name"/>
+                                </Record>
+                            </Collection>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+                <Annotation Term="Core.Description" String="Currency code as specified by ISO 4217"/>
+            </Annotations>
+            <Annotations Target="fashionShop_Service.SrvFashionShop/currency">
+                <Annotation Term="Common.Label" String="Currency"/>
+                <Annotation Term="Core.Description" String="Currency code as specified by ISO 4217"/>
+            </Annotations>
+            <Annotations Target="fashionShop_Service.SrvFashionShop/currency_code">
+                <Annotation Term="Common.Label" String="Currency"/>
+                <Annotation Term="Common.ValueList">
+                    <Record Type="Common.ValueListType">
+                        <PropertyValue Property="Label" String="Currency"/>
+                        <PropertyValue Property="CollectionPath" String="Currencies"/>
+                        <PropertyValue Property="Parameters">
+                            <Collection>
+                                <Record Type="Common.ValueListParameterInOut">
+                                    <PropertyValue Property="LocalDataProperty" PropertyPath="currency_code"/>
+                                    <PropertyValue Property="ValueListProperty" String="code"/>
+                                </Record>
+                                <Record Type="Common.ValueListParameterDisplayOnly">
+                                    <PropertyValue Property="ValueListProperty" String="name"/>
+                                </Record>
+                            </Collection>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+                <Annotation Term="Core.Description" String="Currency code as specified by ISO 4217"/>
+            </Annotations>
+            <Annotations Target="fashionShop_Service.SrvFashionShop/itemDetails">
+                <Annotation Term="Core.Computed" Bool="true"/>
+            </Annotations>
+            <Annotations Target="fashionShop_Service.SrvFashionShop/priceRange">
+                <Annotation Term="Core.Computed" Bool="true"/>
+            </Annotations>
+            <Annotations Target="fashionShop_Service.Currencies">
+                <Annotation Term="UI.Identification">
+                    <Collection>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="name"/>
+                        </Record>
+                    </Collection>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="fashionShop_Service.Currencies/name">
+                <Annotation Term="Common.Label" String="Name"/>
+            </Annotations>
+            <Annotations Target="fashionShop_Service.Currencies/descr">
+                <Annotation Term="Common.Label" String="Description"/>
+            </Annotations>
+            <Annotations Target="fashionShop_Service.Currencies/code">
+                <Annotation Term="Common.Text" Path="name"/>
+                <Annotation Term="Common.Label" String="Currency Code"/>
+            </Annotations>
+            <Annotations Target="fashionShop_Service.Currencies/symbol">
+                <Annotation Term="Common.Label" String="Currency Symbol"/>
+            </Annotations>
+            <Annotations Target="fashionShop_Service.Currencies/minorUnit">
+                <Annotation Term="Common.Label" String="Currency Minor Unit Fractions"/>
+            </Annotations>
+            <Annotations Target="fashionShop_Service.Currencies_texts/locale">
+                <Annotation Term="Common.Label" String="Language Code"/>
+            </Annotations>
+            <Annotations Target="fashionShop_Service.Currencies_texts/name">
+                <Annotation Term="Common.Label" String="Name"/>
+            </Annotations>
+            <Annotations Target="fashionShop_Service.Currencies_texts/descr">
+                <Annotation Term="Common.Label" String="Description"/>
+            </Annotations>
+            <Annotations Target="fashionShop_Service.Currencies_texts/code">
+                <Annotation Term="Common.Text" Path="name"/>
+                <Annotation Term="Common.Label" String="Currency Code"/>
+            </Annotations>
+        </Schema>
+    </edmx:DataServices>
+</edmx:Edmx>
